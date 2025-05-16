@@ -1,5 +1,9 @@
 hi 
 hello 
 how are you
+<<<<<<< HEAD
 locally edited
 
+=======
+edited in GIT git
+>>>>>>> bb353cf33d4166d6e7ec92da6439c51fa4e8f272
