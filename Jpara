@@ -1,76 +1,24 @@
 pipeline {
     agent any
-
-    parameters {
-        // Define parameters as they are defined in the Jenkins job configuration
-        string(name: 'Process_name', description: 'Name of the package to create and deploy')
-        string(name: 'package_version', description: 'package version to deploy the package')
-        credentials(name: 'delbhumi-pat', description: 'pat for authentication executable')
-        string(name: 'component-name', description: 'name of component to deploy')
-        string(name: 'account_id', description: 'Boomi account ID')
-        string(name: 'environment_id', description: 'unique id of environment')
-        string(name: 'Notes', description: 'node for job')
-        string(name: 'component_id', description: 'node for job')
+    tools {
+       terraform 'terraform-1.12'
     }
-
-    environment {
-        BOOMICICD_CLI_PATH = "${WORKSPACE}/cli/scripts"
-        BOOMI_ACCOUNT_ID = "${params.account_id}"
-        h1 = 'Content-Type: application/json'
-        h2 = 'Accept: application/json'
-        baseURL = "https://api.boomi.com/api/rest/v1/${params.account_id}"
-        WORKSPACE="${WORKSPACE}"
-    }
-
-stages {
-        // stage('Set Environment Variables') {
-        //     steps {
-        //         script {
-        //             // Use double quotes to allow variable substitution
-        //             sh """
-        //                 accountId=${env.BOOMI_ACCOUNT_ID}
-        //                 authToken='${params.delbhumi_pat}'  // Assuming 'delbhumi_pat' is the correct parameter name
-        //                 h1='Content-Type: application/json'
-        //                 h2='Accept: application/json'
-        //                 baseURL=https://api.boomi.com/api/rest/v1/\$accountId
-        //                 WORKSPACE=${env.WORKSPACE}
-        //                 envId='${params.environment_id}'
-        //             """
-        //         }
-        //     }
-        // }
-
-        // stage('Create Package') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 echo "Package creation started"
-        //                 cd ${env.BOOMICICD_CLI_PATH}
-        //                 packageId=$(bin/createPackage.sh packageVersion="${params.package_version}" notes="${params.Notes}")
-        //                 echo "Package created with ID: $packageId"
-        //                 echo "PACKAGE_ID=$packageId" > package_id.txt
-        //                 echo "Package created"
-        //             '''
-        //             env.PACKAGE_ID = readFile('package_id.txt').trim()
-        //         }
-        //     }
-        // }
-
-        stage('Deploy Package') {
-            steps {
-                script {
-                  //  def packageId = env.PACKAGE_ID  // Retrieve PACKAGE_ID from environment
-
-                   // echo "Package ID to deploy: $packageId"
-                    sh '''
-                        echo "Package deployment started"
-                        sudo chmod 777 "${WORKSPACE}"/deploy_bhoomi_package.sh 
-                        ./deploy_bhoomi_package.sh "" ""
-                        echo "Package deployed"
-                    '''
-                }
+    
+    stages {
+   
+        stage('terraform Init') {
+            steps{
+                
+                sh 'terraform init'
+                sh 'terraform validate'
+                sh 'terraform plan'
+                sh 'terraform apply --auto-approve'
+                
             }
         }
+            
     }
 }
 
+
+   
