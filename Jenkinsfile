@@ -1,20 +1,20 @@
 pipeline {
     agent any
     stages {
-        stage('clean_workspace') {
+        stage('Build') {
             steps {
-                // You can choose to clean workspace before build as follows
-                cleanWs deleteDirs: true, notFailBuild: true
-                checkout scm
-               
+                echo 'Building the application...'
             }
         }
-        
-        stage ('Build') {
-            steps { 
-                    sh 'mvn clean install -DskipTests=true '                                    
-               }
-         }
-        
-                   
-    }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+            }
+        }
+    }
+}
