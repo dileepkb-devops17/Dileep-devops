@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+    stages {
+        stage('Print Message') {
+            steps {
+                script {
+                    println "Hello World from Jenkins!"
+                }
+            }
+        }
+    }
+}
